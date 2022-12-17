@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import random
+import sys
 
 # Basic initializations
 pygame.init()
@@ -9,7 +10,6 @@ running = True
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Space Bore")
 bg_img = pygame.image.load("space.jpg")
-
 pygame.display.update()
 
 
@@ -18,6 +18,7 @@ class Ship(object):
         self.ship = pygame.image.load("ship.png")
         self.ship_loc = self.ship.get_rect()
         self.ship_loc.center = width / 2, height * 0.8
+        self.collision = False
         self.vel = 1
 
 
@@ -30,7 +31,6 @@ class Rock(object):
 
 
 def incomingRock():
-    #print(rock.rock_loc)
     column = random.randint(0, 1200)
     rock.rock_loc[1] += rock.vel
     if rock.rock_loc[1] > height:
@@ -38,11 +38,17 @@ def incomingRock():
         rock.rock_loc.center = column, -200
 
 
+def shipHit():
+    print("BOOM!")
+    sys.exit()
+
+
 ship = Ship()
 rock = Rock()
 while running:
-
     incomingRock()
+    if ship.collision:
+        shipHit()
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -59,17 +65,12 @@ while running:
         if ship.ship_loc[0] < 0:
             ship.ship_loc[0] = width
 
-    if (rock.rock_loc[1] + rock.rock_loc[2] >= ship.ship_loc[1] and
-        rock.rock_loc[0] + rock.rock_loc[3] >= ship.ship_loc[0] and
-        rock.rock_loc[0] + rock.rock_loc[3] <= ship.ship_loc[0] + ship.ship_loc[3]):
-        collision = True
-        print("BOOM1")
-
-    if (rock.rock_loc[1] + rock.rock_loc[2] >= ship.ship_loc[1] and
-        rock.rock_loc[1] + rock.rock_loc[2] <= ship.ship_loc[0] and
-        rock.rock_loc[1] + rock.rock_loc[2] >= ship.ship_loc[0] + ship.ship_loc[3]):
-        collision = True
-        print("BOOM2")
+    # Hit detection
+    if (ship.ship_loc[1] <= rock.rock_loc[1] + rock.rock_loc[2] <= ship.ship_loc[1] + ship.ship_loc[2] and
+        ship.ship_loc[0] <= rock.rock_loc[0] + rock.rock_loc[3] <= ship.ship_loc[0] + ship.ship_loc[3]) or \
+        (rock.rock_loc[1] + rock.rock_loc[2] >= ship.ship_loc[1] and
+        ship.ship_loc[0] + ship.ship_loc[3] >= rock.rock_loc[0] >= ship.ship_loc[0]):
+        ship.collision = True
 
     screen.blit(bg_img, (0, 0))
     screen.blit(ship.ship, ship.ship_loc)
