@@ -26,6 +26,7 @@ class Ship(pygame.sprite.Sprite):
         self.cooldown = False
         self.life = 5
         self.score = 0
+        self.level = 0
         self.vel = 1
 
     def update(self):
@@ -40,9 +41,8 @@ class Ship(pygame.sprite.Sprite):
                 self.ship_loc[0] = width
         if self.ship_loc.colliderect(rock.rock_loc):
             self.shipHit()
-        if not self.ship_loc.colliderect(rock.rock_loc) and \
-            rock.rock_loc.y >= 800:
-            print("score")
+        if not self.ship_loc.colliderect(rock.rock_loc) and rock.rock_loc.y >= 800:
+            ship.score += 1
 
     def shipHit(self):
         if not self.cooldown:
@@ -85,7 +85,14 @@ def redrawGameWindow():
 
 ship = Ship()
 rock = Rock()
+counter = 0
 while running:
+    counter += 1
+    if counter == 1024:
+        rock.vel += 0.25
+        counter = 0
+        ship.level += 1
+        print(ship.level)
 
     for event in pygame.event.get():
         if event.type == QUIT:
