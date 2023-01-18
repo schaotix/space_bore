@@ -3,13 +3,16 @@ from pygame.locals import *
 import random
 
 pygame.init()
+pygame.mixer.init()
 
+hit = pygame.mixer.Sound("assets/explosion.wav") # Taken from CS50G by Colton Ogden
+endgame = pygame.mixer.Sound("assets/gameover.wav") # https://www.videvo.net/sound-effect/mi-explosion-03-hpx/251585/
 size = width, height = (1200, 800)
 font = pygame.font.SysFont("Times", 30, True)
 screen = pygame.display.set_mode(size)
 red = (255, 0, 0)
-pygame.display.set_caption("Space Bore")
-bg_img = pygame.image.load("space.jpg")
+pygame.display.set_caption("Spacer - Michael Mandeville 2023")
+bg_img = pygame.image.load("assets/space.jpg")
 hit_cooldown = pygame.USEREVENT + 1
 game_over = pygame.USEREVENT + 2
 pygame.display.update()
@@ -18,7 +21,7 @@ pygame.display.update()
 class Ship(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.ship = pygame.image.load("ship.png")
+        self.ship = pygame.image.load("assets/ship.png")
         self.ship_loc = self.ship.get_rect()
         self.ship_loc.center = width / 2, height * 0.8
         self.cooldown = False
@@ -45,6 +48,7 @@ class Ship(pygame.sprite.Sprite):
             pygame.time.set_timer(hit_cooldown, 1000)
             self.life -= 1
             if self.life > 0:
+                pygame.mixer.Sound.play(hit)
                 print("Hit!")
             else:
                 pygame.event.post(pygame.event.Event(game_over))
@@ -53,7 +57,7 @@ class Ship(pygame.sprite.Sprite):
 
 class Rock(object):
     def __init__(self):
-        self.rock = pygame.image.load("rock.png")
+        self.rock = pygame.image.load("assets/rock.png")
         self.rock_loc = self.rock.get_rect()
         self.rock_loc.center = -200, -200
         self.vel = 1
@@ -77,6 +81,7 @@ def updateRock():
 
 
 def endTitle(score):
+    pygame.mixer.Sound.play(endgame)
     if score > 0:
         final = font.render("Congratulations, your score is " + str(score), True, (0, 0, 255))
         screen.fill(red)
@@ -105,6 +110,7 @@ def main():
     counter = 0
     running = True
     while running:
+
         counter += 1
         if counter == 3028:
             rock.vel += 0.25
