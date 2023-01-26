@@ -1,12 +1,13 @@
 import pygame
 from pygame.locals import *
 import random
+import math
 
 pygame.init()
 pygame.mixer.init()
 
-hit = pygame.mixer.Sound("assets/explosion.wav") # Taken from CS50G by Colton Ogden
-endgame = pygame.mixer.Sound("assets/gameover.wav") # https://www.videvo.net/sound-effect/mi-explosion-03-hpx/251585/
+hit = pygame.mixer.Sound("assets/explosion.wav") # Created with jsfxr https://sfxr.me/
+endgame = pygame.mixer.Sound("assets/gameover.wav") # Created with jsfxr https://sfxr.me/
 size = width, height = (1200, 800)
 font = pygame.font.SysFont("Times", 30, True)
 screen = pygame.display.set_mode(size)
@@ -85,7 +86,7 @@ def endTitle(score):
     if score > 0:
         final = font.render("Congratulations, your score is " + str(score), True, (0, 0, 255))
         screen.fill(red)
-        screen.blit(final, (400, 400))
+        screen.blit(final, (350, 400))
     else:
         final = font.render("Oh no! The universe is doomed!", True, (0, 0, 255))
         screen.fill(red)
